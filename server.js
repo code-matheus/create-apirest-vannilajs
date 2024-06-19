@@ -11,6 +11,20 @@ const requestHandler = (req, res) => {
         req.on('data', chunk => {
             body += chunk.toString();
         });
-        
+        req.on('end', () => {
+            res.writeHead(200);
+            res.end(JSON.stringify({ message: 'Data received', data: JSON.parse(body) }))
+        })
+    } else {
+        res.writeHead(404);
+        res.end(JSON.stringify({ message: 'Not Found' }));
     }
-}
+};
+
+const server = http.createServer(requestHandler);
+
+const PORT = 3000;
+
+server.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
