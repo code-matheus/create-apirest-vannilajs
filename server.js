@@ -1,30 +1,25 @@
-const http = require('http');
+const express = require('express');
+const bodyParser = require('body-parser');
+const path = require('path');
+const userRoutes = require('./src/routes/userRoutes');
 
-const requestHandler = (req, res) => {
-    res.setHeader('Content-Type', 'application/json');
+const app = express();
 
-    if (req.method === 'GET' && req.url === '/') {
-        res.writeHead(200);
-        res.end(JSON.stringify({ message: 'Hello world!' }));
-    } else if (req.method === 'POST' && req.url === '/') {
-        let body = '';
-        req.on('data', chunk => {
-            body += chunk.toString();
-        });
-        req.on('end', () => {
-            res.writeHead(200);
-            res.end(JSON.stringify({ message: 'Data received', data: JSON.parse(body) }))
-        })
-    } else {
-        res.writeHead(404);
-        res.end(JSON.stringify({ message: 'Not Found' }));
-    }
-};
+// Middleware para servir arquivos estáticos
+app.use(express.static(path.join(__dirname, 'src', 'public')));
 
-const server = http.createServer(requestHandler);
+// Middleware para analisar JSON
+app.use(bodyParser.json());
+
+// Roteamento da API
+app.use('/api', userRoutes);
+
+// Rota para servir o arquivo HTML principal
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'src', 'views', 'index.html'));
+});
 
 const PORT = 3000;
-
-server.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
