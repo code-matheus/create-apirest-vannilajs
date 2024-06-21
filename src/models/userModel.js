@@ -3,33 +3,33 @@ const db = require('../config/db');
 class UserModel {
     static async getAllUsers() {
         const result = await db.query(
-            'SELECT * FROM users'
+            'SELECT * FROM test2'
         );
         return result.rows;
     }
     static async getUserbyId(id) {
         const result = await db.query(
-            'SELECT * FROM users WHERE id = $1', [id]
+            'SELECT * FROM test2 WHERE id = $1', [id]
         );
         return result.rows[0];
     }
     static async createUser(info) {
         const result = await db.query(
-            'INSERT INTO users (name, email, password, cpf, phone, birthdate) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-            [info.name, info.email, info.password, info.cpf, info.phone, info.birthdate]
+            'INSERT INTO test2 (name, email) VALUES ($1, $2) RETURNING *',
+            [info.name, info.email]
         );
         return result.rows[0];
     }
     static async updateUser(id, info) {
         const result = await db.query(
-            'UPDATE users SET name = $1, email = $2, password = $3, cpf = $4, phone = $5, birthdate = $6 WHERE id = $7 RETURNING *',
-            [info.name, info.email, info.password, info.cpf, info.phone, info.birthdate, id]
+            'UPDATE test2 SET name = $1, email = $2 WHERE id = $3 RETURNING *',
+            [info.name, info.email, id]
         );
         return result.rows[0];
     }
     static async deleteUser(id) {
         const result = await db.query(
-            'DELETE FROM users WHERE id = $1', [id]
+            'DELETE FROM test2 WHERE id = $1', [id]
         )
         return result.rowCount > 0
     }
@@ -37,4 +37,3 @@ class UserModel {
 
 
 module.exports = UserModel;
-console.log()
